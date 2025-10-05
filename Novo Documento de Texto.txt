@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Farmácia São Saúde — Demo</title>
+  <meta name="description" content="Template de site para farmácia — catálogo, busca, carrinho e contato." />
+  <style>
+    /* Reset e layout básico */
+    :root{--primary:#0066a8;--accent:#00a878;--muted:#666}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Inter, system-ui, Arial, sans-serif;line-height:1.4;color:#111;background:#f7f9fb}
+    .container{max-width:1100px;margin:24px auto;padding:0 18px}
+
+    header{background:white;padding:18px;border-radius:12px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 6px 18px rgba(10,20,30,0.06)}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
+    nav a{margin-left:12px;color:var(--muted);text-decoration:none}
+
+    .hero{margin-top:18px;background:linear-gradient(90deg,rgba(0,102,168,0.06),rgba(0,168,120,0.03));padding:20px;border-radius:12px;display:flex;gap:20px;align-items:center}
+    .hero h1{font-size:1.5rem;color:var(--primary)}
+    .hero p{color:#334;opacity:0.9}
+
+    /* Busca e filtros */
+    .controls{margin-top:16px;display:flex;gap:12px;align-items:center}
+    .search{flex:1;display:flex}
+    .search input{flex:1;padding:10px 12px;border-radius:10px;border:1px solid #e0e6ea}
+    .search button{padding:10px 14px;margin-left:8px;border-radius:10px;border:0;background:var(--primary);color:white}
+
+    /* Grid de produtos */
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:16px}
+    .card{background:white;padding:12px;border-radius:12px;box-shadow:0 6px 14px rgba(10,20,30,0.04);display:flex;flex-direction:column}
+    .card img{width:100%;height:150px;object-fit:contain;border-radius:8px;background:#fff}
+    .card h3{font-size:1rem;margin-top:10px}
+    .price{margin-top:6px;font-weight:700;color:var(--primary)}
+    .card .actions{margin-top:auto;display:flex;gap:8px;align-items:center}
+    .btn{padding:8px 10px;border-radius:8px;border:0;cursor:pointer}
+    .btn-outline{background:#f2f6f8;border:1px solid #e6eef3}
+    .btn-primary{background:var(--accent);color:white}
+
+    /* Carrinho flutuante */
+    .cart-floating{position:fixed;right:24px;bottom:24px;background:white;padding:12px;border-radius:12px;box-shadow:0 14px 30px rgba(10,20,30,0.12);width:320px;max-height:70vh;overflow:auto}
+    .cart-floating h4{margin-bottom:8px}
+    .cart-item{display:flex;gap:8px;padding:8px 0;border-bottom:1px dashed #eee}
+    .cart-item img{width:52px;height:52px;object-fit:cover;border-radius:6px}
+    .cart-summary{margin-top:12px;display:flex;justify-content:space-between;align-items:center}
+
+    /* Footer e contato */
+    footer{margin-top:24px;padding:18px;border-radius:12px;background:white;box-shadow:0 6px 18px rgba(10,20,30,0.04)}
+    form input, form textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef3;margin-top:8px}
+
+    /* Responsivo */
+    @media (max-width:640px){.hero{flex-direction:column;align-items:flex-start}.cart-floating{width:94vw;right:3vw;left:3vw}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">FS</div>
+        <div>
+          <div style="font-weight:700">Farmácia São Saúde</div>
+          <div style="font-size:12px;color:var(--muted)">Saúde, confiança e entrega rápida</div>
+        </div>
+      </div>
+      <nav>
+        <a href="#produtos">Produtos</a>
+        <a href="#onlines">Como comprar</a>
+        <a href="#contato">Contato</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div>
+        <h1>Bem-vindo à Farmácia São Saúde</h1>
+        <p>Compre medicamentos, vitaminas e itens de higiene com facilidade. Este é um template funcional para você adaptar.</p>
+      </div>
+      <div style="margin-left:auto;text-align:right">
+        <div style="font-size:12px;color:var(--muted)">Horário:</div>
+        <div style="font-weight:700">Seg–Sáb 08:00–20:00</div>
+      </div>
+    </section>
+
+    <div class="controls">
+      <div class="search">
+        <input id="searchInput" placeholder="Buscar medicamento, marca ou categoria" />
+        <button id="searchBtn">Buscar</button>
+      </div>
+      <div>
+        <select id="categoryFilter">
+          <option value="">Todas categorias</option>
+        </select>
+      </div>
+      <div>
+        <button id="viewCartBtn" class="btn btn-outline">Ver carrinho (<span id="cartCount">0</span>)</button>
+      </div>
+    </div>
+
+    <main id="produtos" class="grid" aria-live="polite">
+      <!-- Produtos serão inseridos via JS -->
+    </main>
+
+    <footer id="contato">
+      <h3>Fale conosco</h3>
+      <p>Preencha o formulário para dúvidas ou pedidos especiais.</p>
+      <form id="contactForm" onsubmit="return false">
+        <input type="text" id="name" placeholder="Seu nome" required />
+        <input type="email" id="email" placeholder="Seu e-mail" required />
+        <textarea id="message" rows="4" placeholder="Mensagem"></textarea>
+        <div style="margin-top:8px;display:flex;gap:8px">
+          <button id="sendMsg" class="btn btn-primary">Enviar</button>
+          <button id="clearMsg" class="btn btn-outline">Limpar</button>
+        </div>
+      </form>
+    </footer>
+  </div>
+
+  <!-- Carrinho flutuante (oculto por padrão) -->
+  <div id="cartFloating" class="cart-floating" style="display:none">
+    <h4>Seu carrinho</h4>
+    <div id="cartItems"></div>
+    <div class="cart-summary">
+      <div>Total:</div>
+      <div id="cartTotal">R$ 0,00</div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:8px">
+      <button id="checkoutBtn" class="btn btn-primary">Finalizar compra</button>
+      <button id="closeCartBtn" class="btn btn-outline">Fechar</button>
+    </div>
+  </div>
+
+  <script>
+    // Dados de exemplo — aqui você pode puxar da sua API
+    const products = [
+      {id:1,name:'Dipirona 500mg - 10 comprimidos',price:5.50,category:'Analgésicos',img:'https://via.placeholder.com/300x200?text=Dipirona'},
+      {id:2,name:'Paracetamol 500mg - 10 comprimidos',price:6.25,category:'Analgésicos',img:'https://via.placeholder.com/300x200?text=Paracetamol'},
+      {id:3,name:'Vitamin C 1000mg - 60 cápsulas',price:29.90,category:'Vitaminas',img:'https://via.placeholder.com/300x200?text=Vitamina+C'},
+      {id:4,name:'Xampu Anticaspa 200ml',price:18.00,category:'Higiene',img:'https://via.placeholder.com/300x200?text=Xampu'},
+      {id:5,name:'Creme Dental 90g',price:8.50,category:'Higiene',img:'https://via.placeholder.com/300x200?text=Creme+Dental'},
+      {id:6,name:'Máscara descartável 50un',price:45.00,category:'EPIs',img:'https://via.placeholder.com/300x200?text=Mascaras'}
+    ];
+
+    // Estado do carrinho
+    const cart = {}; // {productId: qty}
+
+    // Elementos
+    const grid = document.querySelector('.grid');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const cartCount = document.getElementById('cartCount');
+    const viewCartBtn = document.getElementById('viewCartBtn');
+    const cartFloating = document.getElementById('cartFloating');
+    const cartItems = document.getElementById('cartItems');
+    const cartTotal = document.getElementById('cartTotal');
+    const closeCartBtn = document.getElementById('closeCartBtn');
+    const checkoutBtn = document.getElementById('checkoutBtn');
+
+    // Inicializa
+    function init(){
+      populateCategories();
+      renderProducts(products);
+      attachEvents();
+      updateCartUI();
+    }
+
+    function populateCategories(){
+      const cats = Array.from(new Set(products.map(p=>p.category)));
+      cats.forEach(c=>{
+        const opt = document.createElement('option'); opt.value=c; opt.textContent=c; categoryFilter.appendChild(opt);
+      })
+    }
+
+    function renderProducts(list){
+      grid.innerHTML='';
+      if(list.length===0){grid.innerHTML='<div style="padding:20px;font-size:14px;color:var(--muted)">Nenhum produto encontrado.</div>';return}
+      list.forEach(p=>{
+        const card = document.createElement('article'); card.className='card';
+        card.innerHTML = `
+          <img src="${p.img}" alt="${p.name}" />
+          <h3>${p.name}</h3>
+          <div class="price">R$ ${p.price.toFixed(2)}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:6px">${p.category}</div>
+          <div class="actions">
+            <button class="btn btn-outline" data-id="${p.id}">Detalhes</button>
+            <button class="btn btn-primary" data-add="${p.id}">Adicionar</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      })
+    }
+
+    function attachEvents(){
+      searchBtn.addEventListener('click',()=>applyFilters());
+      searchInput.addEventListener('keydown',(e)=>{ if(e.key==='Enter') applyFilters(); });
+      categoryFilter.addEventListener('change',()=>applyFilters());
+
+      grid.addEventListener('click',(e)=>{
+        const id = e.target.getAttribute('data-add');
+        if(id) addToCart(Number(id));
+      })
+
+      viewCartBtn.addEventListener('click',()=>{ cartFloating.style.display='block'; renderCart(); });
+      closeCartBtn.addEventListener('click',()=>cartFloating.style.display='none');
+      checkoutBtn.addEventListener('click',()=>{ alert('Simulação: redirecionar para página de pagamento / confirmação.'); });
+
+      document.getElementById('sendMsg').addEventListener('click',()=>{
+        alert('Mensagem enviada — aqui você integraria com seu e-mail ou API.');
+      });
+      document.getElementById('clearMsg').addEventListener('click',()=>{
+        document.getElementById('name').value='';document.getElementById('email').value='';document.getElementById('message').value='';
+      })
+    }
+
+    function applyFilters(){
+      const q = searchInput.value.trim().toLowerCase();
+      const cat = categoryFilter.value;
+      const filtered = products.filter(p=>{
+        const matchQ = q==='' || p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q);
+        const matchCat = cat==='' || p.category===cat;
+        return matchQ && matchCat;
+      })
+      renderProducts(filtered);
+    }
+
+    function addToCart(id){
+      cart[id] = (cart[id]||0) + 1;
+      updateCartUI();
+      // feedback rápido
+      const prod = products.find(p=>p.id===id);
+      const toast = document.createElement('div');
+      toast.textContent = `${prod.name} adicionado ao carrinho`;
+      toast.style.position='fixed';toast.style.left='50%';toast.style.transform='translateX(-50%)';toast.style.bottom='90px';toast.style.background='rgba(0,0,0,0.8)';toast.style.color='white';toast.style.padding='8px 12px';toast.style.borderRadius='8px';document.body.appendChild(toast);
+      setTimeout(()=>toast.remove(),1400);
+    }
+
+    function updateCartUI(){
+      const count = Object.values(cart).reduce((s,n)=>s+n,0);
+      cartCount.textContent = count;
+    }
+
+    function renderCart(){
+      cartItems.innerHTML='';
+      let total = 0;
+      if(Object.keys(cart).length===0){ cartItems.innerHTML='<div style="color:var(--muted)">Carrinho vazio.</div>'; cartTotal.textContent='R$ 0,00'; return }
+      Object.entries(cart).forEach(([id,qty])=>{
+        const p = products.find(x=>x.id===Number(id));
+        const row = document.createElement('div'); row.className='cart-item';
+        row.innerHTML = `
+          <img src="${p.img}" alt="${p.name}" />
+          <div style="flex:1">
+            <div style="font-weight:700">${p.name}</div>
+            <div style="font-size:13px;color:var(--muted)">R$ ${p.price.toFixed(2)} x ${qty}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+            <button class="btn btn-outline" data-minus="${p.id}">-</button>
+            <button class="btn btn-outline" data-plus="${p.id}">+</button>
+            <button class="btn" data-remove="${p.id}" style="font-size:12px;color:#b00;background:transparent;border:0">Remover</button>
+          </div>
+        `;
+        cartItems.appendChild(row);
+        total += p.price * qty;
+      })
+      cartTotal.textContent = `R$ ${total.toFixed(2)}`;
+
+      // eventos para + - remover
+      cartItems.querySelectorAll('[data-plus]').forEach(btn=>btn.addEventListener('click',e=>{ const id=Number(e.target.getAttribute('data-plus')); cart[id]=(cart[id]||0)+1; renderCart(); updateCartUI(); }));
+      cartItems.querySelectorAll('[data-minus]').forEach(btn=>btn.addEventListener('click',e=>{ const id=Number(e.target.getAttribute('data-minus')); if(!cart[id]) return; cart[id]--; if(cart[id]<=0) delete cart[id]; renderCart(); updateCartUI(); }));
+      cartItems.querySelectorAll('[data-remove]').forEach(btn=>btn.addEventListener('click',e=>{ const id=Number(e.target.getAttribute('data-remove')); delete cart[id]; renderCart(); updateCartUI(); }));
+    }
+
+    // inicialização
+    init();
+  </script>
+</body>
+</html>
